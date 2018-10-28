@@ -1,32 +1,47 @@
 package com.example.PabloSeroa.agenda.itemviewholder;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.example.PabloSeroa.agenda.R;
+import com.example.PabloSeroa.agenda.interfaces.MyClickListener;
+import com.example.PabloSeroa.agenda.model.pessoa;
 import com.example.PabloSeroa.agenda.viewholder.PessoaListViewHouder;
 import com.xwray.groupie.Item;
-import com.xwray.groupie.OnItemClickListener;
-import com.xwray.groupie.OnItemLongClickListener;
-import com.xwray.groupie.ViewHolder;
-
-import java.util.List;
 
 public class PessoaListItem extends Item<PessoaListViewHouder> {
 
-    @Override
-    public void bind(@NonNull PessoaListViewHouder viewHolder, int position) {
+    private MyClickListener listener;
+    pessoa pessoa;
 
+    public PessoaListItem(MyClickListener listener, pessoa p) {
+        this.listener = listener;
+        this.pessoa = p;
+    }
+
+    @Override
+    public void bind(@NonNull PessoaListViewHouder viewHolder, final int position) {
+        viewHolder.nome.setText(pessoa.getNome());
+        viewHolder.telefone.setText(pessoa.getTelefone());
+        viewHolder.email.setText(pessoa.getEmail());
+        viewHolder.cidade.setText(pessoa.getCidade());
+        viewHolder.lnt.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                listener.onClick(pessoa.getId());
+              }
+          }
+        );
     }
 
     @Override
     public int getLayout() {
-        return 0;
+        return R.layout.pessoa_information_list;
     }
 
     @NonNull
     @Override
     public PessoaListViewHouder createViewHolder(@NonNull View itemView) {
-        return super.createViewHolder(itemView);
+        return new PessoaListViewHouder(itemView);
     }
 }

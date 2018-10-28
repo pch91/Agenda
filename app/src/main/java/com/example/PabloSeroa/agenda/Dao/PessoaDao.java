@@ -31,9 +31,9 @@ public class PessoaDao {
         output.close();
     }
 
-    public List<pessoa> listaAll(pessoa p, Context c) throws IOException, JSONException {
+    public List<pessoa> listaAll(Context c) throws IOException, JSONException {
         List<pessoa> lp = new ArrayList<pessoa>();
-        InputStream inputStream = c.getResources().getAssets().open("Agenda.txt");
+        InputStream inputStream = c.openFileInput("Agenda.txt");
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
 
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
@@ -47,7 +47,7 @@ public class PessoaDao {
         return lp;
     }
 
-    public pessoa listaAll(String pessoaid, Context c) throws IOException, JSONException {
+    public pessoa getPessoa(String pessoaid, Context c) throws IOException, JSONException {
         pessoa p = new pessoa();
         InputStream inputStream = c.getResources().getAssets().open("Agenda.txt");
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
