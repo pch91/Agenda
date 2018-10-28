@@ -1,5 +1,6 @@
 package com.example.PabloSeroa.agenda;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -89,11 +90,19 @@ public class MainActivity extends AppCompatActivity {
         final MyClickListener listener = new MyClickListener() {
             @Override
             public void onClick(String position) {
-                Toast.makeText(
-                        MainActivity.this,
-                        "Clicado position: " + position,
-                        Toast.LENGTH_LONG
-                ).show();
+                PessoaDao pdao = new PessoaDao();
+                try {
+                    pessoa p = pdao.getPessoa(position,getApplicationContext());
+                    Intent intent = new Intent(MainActivity.this, Main2Activity.class);
+                    intent.putExtra("pessoa", p);
+                    getIntent().getSerializableExtra("pessoa");
+                    startActivity(intent);
+                    finish();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         };
 

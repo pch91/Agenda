@@ -3,7 +3,9 @@ package com.example.PabloSeroa.agenda.model;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class pessoa {
+import java.io.Serializable;
+
+public class pessoa implements Serializable {
 
     String Id;
     String nome;
