@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.example.PabloSeroa.agenda.Dao.PessoaDao;
 import com.example.PabloSeroa.agenda.interfaces.MyClickListener;
@@ -31,8 +30,25 @@ public class MainActivity extends AppCompatActivity {
         EditText mEmail;
         EditText mTel;
         EditText mCidade;
-      // final String = "$3PaR4";
 
+      // final String = "$3PaR4";
+      final MyClickListener listener = new MyClickListener() {
+          @Override
+          public void onClick(String position) {
+              PessoaDao pdao = new PessoaDao();
+              try {
+                  pessoa p = pdao.getPessoa(position,getApplicationContext());
+                  Intent intent = new Intent(MainActivity.this, Main2Activity.class);
+                  intent.putExtra("pessoa", p);
+                  startActivity(intent);
+                  overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+              } catch (IOException e) {
+                  e.printStackTrace();
+              } catch (JSONException e) {
+                  e.printStackTrace();
+              }
+          }
+      };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -48,11 +64,30 @@ public class MainActivity extends AppCompatActivity {
             case R.id.ListPerson:
                 findViewById(R.id.add_pessoa_const).setVisibility(View.INVISIBLE);
                 findViewById(R.id.PessoasView).setVisibility(View.VISIBLE);
+
+                RecyclerView PessoaView = findViewById(R.id.PessoasView);
+                PessoaView.setLayoutManager(new GridLayoutManager(this, 1));
+                final GroupAdapter<PessoaListViewHouder> adapter = new GroupAdapter();
+                PessoaView.setAdapter(adapter);
+                PessoaDao pdao =  new PessoaDao();
+                List<pessoa> lp;
+                try {
+                    lp = pdao.listaAll(getApplicationContext());
+                    populateViewListPessoa(lp,adapter,listener);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 return true;
 
             case R.id.add_pessoa:
                 findViewById(R.id.add_pessoa_const).setVisibility(View.VISIBLE);
                 findViewById(R.id.PessoasView).setVisibility(View.INVISIBLE);
+                /*mNome.setTextKeepState("Nome");
+                mTel.setTextKeepState("Telefone");
+                mCidade.setTextKeepState("Cidade");
+                mEmail.setTextKeepState("Email");*/
                 return true;
         }
 
@@ -62,18 +97,19 @@ public class MainActivity extends AppCompatActivity {
     public void populateViewListPessoa(List<pessoa> lp, GroupAdapter ga, MyClickListener listener){
         for (pessoa p: lp) {
             ga.add(new PessoaListItem(listener,p));
-            ga.add(new PessoaListItem(listener,p));
-            ga.add(new PessoaListItem(listener,p));
-            ga.add(new PessoaListItem(listener,p));
-            ga.add(new PessoaListItem(listener,p));
-            ga.add(new PessoaListItem(listener,p));
         }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(com.example.PabloSeroa.agenda.R.layout.activity_main);
+        setContentView(R.layout.cadastro_pessoa);
+        PessoaDao pdao =  new PessoaDao();
+
+        mNome = findViewById(R.id.etNome);
+        mEmail = findViewById(R.id.etEmail);
+        mTel = findViewById(R.id.etTel);
+        mCidade = findViewById(R.id.etCidade);
 
 
         RecyclerView PessoaView = findViewById(R.id.PessoasView);
@@ -82,31 +118,6 @@ public class MainActivity extends AppCompatActivity {
         final GroupAdapter<PessoaListViewHouder> adapter = new GroupAdapter();
         PessoaView.setAdapter(adapter);
 
-        mNome = findViewById(R.id.etNome);
-        mEmail = findViewById(R.id.etEmail);
-        mTel = findViewById(R.id.etTel);
-        mCidade = findViewById(R.id.etCidade);
-
-        final MyClickListener listener = new MyClickListener() {
-            @Override
-            public void onClick(String position) {
-                PessoaDao pdao = new PessoaDao();
-                try {
-                    pessoa p = pdao.getPessoa(position,getApplicationContext());
-                    Intent intent = new Intent(MainActivity.this, Main2Activity.class);
-                    intent.putExtra("pessoa", p);
-                    getIntent().getSerializableExtra("pessoa");
-                    startActivity(intent);
-                    finish();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        PessoaDao pdao =  new PessoaDao();
         List<pessoa> lp;
         try {
             lp = pdao.listaAll(getApplicationContext());
