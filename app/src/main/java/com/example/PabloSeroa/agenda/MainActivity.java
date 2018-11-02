@@ -1,6 +1,7 @@
 package com.example.PabloSeroa.agenda;
 
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -136,6 +137,8 @@ public class MainActivity extends AppCompatActivity {
                     PessoaDao pdao =  new PessoaDao();
                     pdao.add(new pessoa(String.valueOf(new Random().nextInt(999999)),mNome.getText().toString(),mTel.getText().toString(),mEmail.getText().toString(),mCidade.getText().toString()), getApplicationContext());
 
+                    Snackbar snk = Snackbar.make(findViewById(R.id.add_pessoa),"Pessoa Cadastrada", Snackbar.LENGTH_LONG);
+                    snk.show();
                 } catch (Exception e) {
                     Log.e("FileYest", "Error", e);
 
