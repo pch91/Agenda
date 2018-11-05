@@ -2,6 +2,7 @@ package com.example.PabloSeroa.agenda;
 
 import android.app.TaskStackBuilder;
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -40,11 +41,19 @@ public class Main2Activity extends AppCompatActivity {
                 try {
                     pdao.removePessoa(p.getId(), getBaseContext());
                     Intent intent = new Intent(Main2Activity.this, MainActivity.class);
+                    intent.putExtra("resp", "Pessoa removida com sucesso.");
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_lef);
+
                 } catch (IOException e) {
+                    Snackbar snk = Snackbar.make(findViewById(R.id.add_pessoa_const),"ocorreu um erro ao executar a operação", Snackbar.LENGTH_LONG);
+
+                    snk.show();
                     e.printStackTrace();
                 } catch (JSONException e) {
+                    Snackbar snk = Snackbar.make(findViewById(R.id.add_pessoa_const),"ocorreu um erro ao executar a operação", Snackbar.LENGTH_LONG);
+
+                    snk.show();
                     e.printStackTrace();
                 }
             }

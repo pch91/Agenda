@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -101,11 +102,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public final static boolean isValidEmail(CharSequence target) {
+        return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cadastro_pessoa);
         PessoaDao pdao =  new PessoaDao();
+
+        String resp = (String)getIntent().getSerializableExtra("resp");
+
+        if(resp != null){
+            Snackbar snk = Snackbar.make(findViewById(R.id.add_pessoa_const),resp, Snackbar.LENGTH_LONG);
+
+            snk.show();
+        }
+
 
         mNome = findViewById(R.id.etNome);
         mEmail = findViewById(R.id.etEmail);
@@ -124,8 +138,14 @@ public class MainActivity extends AppCompatActivity {
             lp = pdao.listaAll(getApplicationContext());
             populateViewListPessoa(lp,adapter,listener);
         } catch (IOException e) {
+            Snackbar snk = Snackbar.make(findViewById(R.id.add_pessoa_const),"ocorreu um erro ao executar a operação", Snackbar.LENGTH_LONG);
+
+            snk.show();
             e.printStackTrace();
         } catch (JSONException e) {
+            Snackbar snk = Snackbar.make(findViewById(R.id.add_pessoa_const),"ocorreu um erro ao executar a operação", Snackbar.LENGTH_LONG);
+
+            snk.show();
             e.printStackTrace();
         }
 
@@ -135,11 +155,21 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 try {
                     PessoaDao pdao =  new PessoaDao();
-                    pdao.add(new pessoa(String.valueOf(new Random().nextInt(999999)),mNome.getText().toString(),mTel.getText().toString(),mEmail.getText().toString(),mCidade.getText().toString()), getApplicationContext());
 
-                    Snackbar snk = Snackbar.make(findViewById(R.id.add_pessoa),"Pessoa Cadastrada", Snackbar.LENGTH_LONG);
-                    snk.show();
+
+                    if(isValidEmail(mEmail.getText())) {
+                        Snackbar snk = Snackbar.make(findViewById(R.id.add_pessoa_const), "Pessoa Cadastrada", Snackbar.LENGTH_LONG);
+                        pdao.add(new pessoa(String.valueOf(new Random().nextInt(999999)),mNome.getText().toString(),mTel.getText().toString(),mEmail.getText().toString(),mCidade.getText().toString()), getApplicationContext());
+                        ((Button)findViewById(R.id.btnLimpar)).callOnClick();
+                        snk.show();
+                    }else {
+                        Snackbar snk = Snackbar.make(findViewById(R.id.add_pessoa_const), "Email invalido.", Snackbar.LENGTH_LONG);
+                        snk.show();
+                    }
                 } catch (Exception e) {
+                    Snackbar snk = Snackbar.make(findViewById(R.id.add_pessoa_const),"ocorreu um erro ao executar a operação", Snackbar.LENGTH_LONG);
+
+                    snk.show();
                     Log.e("FileYest", "Error", e);
 
                 }
